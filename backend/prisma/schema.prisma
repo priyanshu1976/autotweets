@@ -1,0 +1,32 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tweet {
+  id           String   @id @default(cuid())
+  content      String
+  hashtags     String[]
+  imageUrl     String?      // Optional AI-generated image
+  scheduledAt  DateTime
+  postedAt     DateTime?    // Null means not posted yet
+  isPosted     Boolean @default(false)
+  createdAt    DateTime @default(now())
+}
+
+model ViralTweet {
+  id           String   @id @default(cuid())
+  tweetId      String   @unique
+  content      String
+  likes        Int
+  retweets     Int
+  impressions  Int
+  hashtags     String[]
+  postedAt     DateTime
+  fetchedAt    DateTime @default(now())
+}

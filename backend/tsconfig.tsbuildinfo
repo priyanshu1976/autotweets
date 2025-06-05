@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/controllers/tweet.controller.ts","./src/db/image.ts","./src/db/prompt.ts","./src/db/utils.ts","./src/routes/tweets.route.ts"],"version":"5.8.3"}
