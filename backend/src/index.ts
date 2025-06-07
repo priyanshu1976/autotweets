@@ -19,6 +19,8 @@ app.use(express.json())
 
 app.use('/api/tweets', tweetsRouter)
 
+const hello = ''
+
 cron.schedule('0 10 * * *', async () => {
   console.log('🕙 Generating morning tweets...')
   await generateDevTweets(5, 'morning')
