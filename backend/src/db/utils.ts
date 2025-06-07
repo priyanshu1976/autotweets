@@ -46,6 +46,7 @@ async function generateDevTweets(count: number, timeOfDay: string) {
       await prisma.tweet.create({
         data: {
           content: tweet.content,
+          //@ts-ignore
           hashtags: tweet.hashtags,
           imageUrl: tweet.imageUrl,
           scheduledAt: new Date(tweet.scheduledAt),

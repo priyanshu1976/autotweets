@@ -1,19 +1,18 @@
 import { PrismaClient } from '@prisma/client'
 import { twitterClient } from '../db/utils'
+import { Request, Response } from 'express'
 
 export const scheduleTweets = async (req: Request, res: Response) => {
   const prisma = new PrismaClient()
   try {
     const tweets = await prisma.tweet.findMany({
       orderBy: {
-        scheduledAt: 'asc',
+        createdAt: 'asc', // Changed from scheduledAt to createdAt
       },
     })
-    //@ts-ignore
     return res.status(200).json(tweets)
   } catch (error) {
     console.error('Error fetching scheduled tweets:', error)
-    //@ts-ignore
     res.status(500).json({ error: 'Failed to fetch scheduled tweets' })
   } finally {
     await prisma.$disconnect()
@@ -37,8 +36,7 @@ export const postScheduledTweets = async () => {
   // Find all tweets that are due to be posted
   const dueTweets = await prisma.tweet.findMany({
     where: {
-      isPosted: false,
-      scheduledAt: { lte: new Date() }, // lte = less than or equal to current time
+      posted: false, // Changed from isPosted to posted
     },
   })
 
@@ -54,7 +52,7 @@ export const postScheduledTweets = async () => {
       // Update tweet status in database
       await prisma.tweet.update({
         where: { id: tweet.id },
-        data: { isPosted: true, postedAt: new Date() },
+        data: { posted: true }, // Changed from isPosted to posted
       })
 
       // Record successful posting
@@ -69,8 +67,7 @@ export const postScheduledTweets = async () => {
       results.push({
         id: tweet.id,
         status: 'error',
-        //@ts-ignore
-        error: e.message,
+        error: e instanceof Error ? e.message : 'Unknown error',
       })
     }
   }
@@ -88,7 +85,7 @@ export const deletePostedTweets = async () => {
     // Delete all tweets that have been posted
     const deletedTweets = await prisma.tweet.deleteMany({
       where: {
-        isPosted: true,
+        posted: true, // Changed from isPosted to posted
       },
     })
 
@@ -99,5 +96,35 @@ export const deletePostedTweets = async () => {
   } catch (error) {
     console.error('Error deleting posted tweets:', error)
     throw error
+  }
+}
+
+export const setPrompt = async (req: Request, res: Response) => {
+  const prisma = new PrismaClient()
+  const userId = (req as any).user.id
+  const { prompt } = req.body
+
+  try {
+    if (!prompt || prompt.trim() === '') {
+      return res.status(400).json({ message: 'Prompt is required' })
+    }
+
+    const newPrompt = await prisma.prompt.create({
+      data: {
+        text: prompt,
+        userId: userId,
+      },
+    })
+
+    return res.status(201).json({
+      message: 'Prompt saved successfully',
+      prompt: newPrompt,
+    })
+  } catch (error: unknown) {
+    console.error(
+      'Error in setPrompt:',
+      error instanceof Error ? error.message : 'Unknown error'
+    )
+    res.status(500).json({ message: 'Internal Server Error' })
   }
 }

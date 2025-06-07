@@ -4,20 +4,29 @@ import cors from 'cors'
 import cron from 'node-cron'
 import generateDevTweets from './db/utils'
 import tweetsRouter from './routes/tweets.route'
+import authRoutes from './routes/auth.route'
 import {
   deletePostedTweets,
   postScheduledTweets,
 } from './controllers/tweet.controller'
+import cookieParser from 'cookie-parser'
 
 dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 3000
 
-app.use(cors())
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+)
 app.use(express.json())
+app.use(cookieParser())
 
 app.use('/api/tweets', tweetsRouter)
+app.use('/api/auth', authRoutes)
 
 cron.schedule('0 10 * * *', async () => {
   console.log('🕙 Generating morning tweets...')

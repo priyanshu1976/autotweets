@@ -19,7 +19,7 @@ const generateImage = (text) => __awaiter(void 0, void 0, void 0, function* () {
         text: text,
     }, {
         headers: {
-            'Api-Key': 'd8255425-3bb7-473a-8b6a-46a4b78c9ae2',
+            'Api-Key': 'fuckoyu',
         },
     });
     const imageUrl = response.data.output_url;

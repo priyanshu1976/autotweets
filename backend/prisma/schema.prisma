@@ -5,28 +5,48 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  createdAt DateTime   @default(now())
+  prompts   Prompt[]
+  tweets    Tweet[]
+  accessKey AccessKey?
+  Password  String
+}
+
+model AccessKey {
+  id                  String   @id @default(uuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id])
+  twitterApiKey       String
+  twitterApiSecret    String
+  twitterAccessToken  String
+  twitterAccessSecret String
+  createdAt           DateTime @default(now())
+}
+
+model Prompt {
+  id        String   @id @default(uuid())
+  text      String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  tweets    Tweet[]
 }
 
 model Tweet {
-  id           String   @id @default(cuid())
-  content      String
-  hashtags     String[]
-  imageUrl     String?      // Optional AI-generated image
-  scheduledAt  DateTime
-  postedAt     DateTime?    // Null means not posted yet
-  isPosted     Boolean @default(false)
-  createdAt    DateTime @default(now())
-}
-
-model ViralTweet {
-  id           String   @id @default(cuid())
-  tweetId      String   @unique
-  content      String
-  likes        Int
-  retweets     Int
-  impressions  Int
-  hashtags     String[]
-  postedAt     DateTime
-  fetchedAt    DateTime @default(now())
+  id        String   @id @default(uuid())
+  content   String
+  prompt    Prompt   @relation(fields: [promptId], references: [id])
+  promptId  String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  approved  Boolean  @default(false) // for the "require approval" toggle
+  posted    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

@@ -4,13 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const tweet_controller_1 = require("../controllers/tweet.controller");
+const auth_controller_1 = require("../controllers/auth.controller");
 const auth_middleware_1 = require("../middleware/auth.middleware");
 const router = express_1.default.Router();
 //@ts-ignore
-router.post('/getScheduleTweets', tweet_controller_1.scheduleTweets);
+router.post('/signup', auth_controller_1.signup);
 //@ts-ignore
-router.post('/postScheduledTweets', tweet_controller_1.postScheduledTweets);
+router.post('/login', auth_controller_1.login);
 //@ts-ignore
-router.post('/setprompt', auth_middleware_1.protectRoute, tweet_controller_1.setPrompt);
+router.post('/logout', auth_controller_1.logout);
+//@ts-ignore
+router.get('/check', auth_middleware_1.protectRoute, auth_controller_1.checkAuth);
 exports.default = router;

@@ -53,6 +53,7 @@ function generateDevTweets(count, timeOfDay) {
                 yield prisma.tweet.create({
                     data: {
                         content: tweet.content,
+                        //@ts-ignore
                         hashtags: tweet.hashtags,
                         imageUrl: tweet.imageUrl,
                         scheduledAt: new Date(tweet.scheduledAt),

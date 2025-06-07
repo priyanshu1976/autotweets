@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/controllers/tweet.controller.ts","./src/db/image.ts","./src/db/prompt.ts","./src/db/utils.ts","./src/routes/tweets.route.ts"],"version":"5.8.3"}
+{"root":["./src/index.ts","./src/controllers/auth.controller.ts","./src/controllers/tweet.controller.ts","./src/db/image.ts","./src/db/prompt.ts","./src/db/utils.ts","./src/lib/utils.ts","./src/middleware/auth.middleware.ts","./src/routes/auth.route.ts","./src/routes/tweets.route.ts"],"version":"5.8.3"}
