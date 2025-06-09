@@ -31,6 +31,17 @@ export const signup = async (req: Request, res: Response) => {
         email,
         Password: hashedPassword,
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    })
+
+    const setting = await prisma.setting.create({
+      data: {
+        userId: newUser.id,
+      },
     })
 
     generateToken(newUser.id, res)

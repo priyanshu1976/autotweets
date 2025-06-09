@@ -38,6 +38,16 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 email,
                 Password: hashedPassword,
             },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+            },
+        });
+        const setting = yield prisma.setting.create({
+            data: {
+                userId: newUser.id,
+            },
         });
         (0, utils_1.generateToken)(newUser.id, res);
         return res.status(201).json({

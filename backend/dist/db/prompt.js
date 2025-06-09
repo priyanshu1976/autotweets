@@ -1,26 +1,37 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-function generatePrompt(count, timeOfDay) {
-    const prompt = `You are a creative and helpful AI designed to generate high-quality, software development-related tweets.
+const utils_1 = require("./utils");
+function generatePrompt(userInput) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const promptToGemini = `
+You are an expert prompt engineer.
 
-Generate exactly ${count} short, fun, and informative tweets in **JSON format** tailored for the "${timeOfDay}" time slot. The tweets should be engaging, developer-friendly, and helpful for tech enthusiasts scrolling through their feed.
+Take the following user description of tweet preferences:
 
-The content focus must include:
-- Frontend development tips (JavaScript, React, CSS, HTML)
-- CSS tips and tricks (flexbox, grid, animations, selectors, responsive design, dark mode, etc.)
-- Programming humor or relatable dev situations
-- Time-saving tools, extensions, or open-source projects
-- Productivity hacks for developers
-- Emerging tech trends in web development (e.g., AI tools, Next.js, Astro, Bun, Deno)
-- Insightful coding best practices
+"${userInput}"
 
-Tweet requirements:
-- Must be under 350 characters
-- Each tweet should include **1 to 3** relevant and trending hashtags (e.g., #DevLife, #100DaysOfCode, #ReactJS, #WebDev, #CSSTips, #Frontend, #TypeScript, #VSCode, #TechHumor, #JavaScript, #CodeNewbie, #OpenSource, #Nextjs, #DeveloperExperience)
-- Must return a valid JSON array, with each tweet object using this structure:
+Based on this, write a professional, clear prompt that instructs an AI to generate short, engaging tweets in JSON format.
+
+Your output must include:
+- What topics the tweets should cover
+- Tone (funny, informative, sarcastic, etc.)
+- Hashtag requirements (1–3 hashtags per tweet)
+- JSON format requirements (see below)
+- Any specific writing guidelines
+
+All tweets must follow this JSON structure:
 
 {
-  "content": "Tweet content here",
+  "content": "Tweet text",
   "hashtags": ["#tag1", "#tag2"],
   "imageUrl": null,
   "scheduledAt": "2025-06-01T08:00:00Z",
@@ -29,16 +40,19 @@ Tweet requirements:
   "createdAt": "2025-06-01T06:30:00Z"
 }
 
-Guidelines:
-- Keep tone light, relatable, and tech-savvy.
-- Avoid generic or outdated advice.
-- Prioritize unique insights, tips, or witty one-liners that resonate with developers.
-- Ensure proper grammar and formatting.
-- Do **not** return any text other than the valid JSON array.
+Ensure your prompt includes:
+- Character limit under 350
+- Language tone/style based on user input
+- Timestamp format (ISO 8601)
+- Output must only be a valid prompt, no extra explanation.
 
-All timestamps must follow ISO 8601 format.
-
-Only return the JSON array. No additional commentary.`;
-    return prompt;
+Return ONLY the prompt.`;
+        const tweetPrompt = yield (0, utils_1.geminiAPI)(promptToGemini);
+        // console.log(tweetPrompt)
+        // console.log('now i want the json tweet about cricket')
+        const tweet = yield (0, utils_1.geminiAPI)(tweetPrompt);
+        // console.log(tweet)
+        return tweet;
+    });
 }
 exports.default = generatePrompt;
