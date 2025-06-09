@@ -29,6 +29,13 @@ app.use(cookieParser())
 app.use('/api/tweets', tweetsRouter)
 app.use('/api/auth', authRoutes)
 app.use('/api/profile', profileRoutes)
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')))
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend', 'dist', 'index.html'))
+  })
+}
 
 // todo schedule cron to create tweet in 10am in the morning
 cron.schedule('0 10 * * *', async () => {
@@ -41,14 +48,6 @@ cron.schedule('0 17 * * *', async () => {
   console.log('posting scheduled tweet generation at 5 pm')
   await postAllTweets()
 })
-
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/dist')))
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend', 'dist', 'index.html'))
-  })
-}
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`)
