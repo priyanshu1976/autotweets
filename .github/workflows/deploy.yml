@@ -21,7 +21,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd cicd
+            cd autotweets
             git pull origin main
+            cd backend
             npm install
-            pm2 restart trycicd || pm2 start dist/index.js --name trycicd
+            pm2 restart autotweets || pm2 start dist/index.js --name autotweets
