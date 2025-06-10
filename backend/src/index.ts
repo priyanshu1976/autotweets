@@ -37,6 +37,8 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
+// hello aws
+
 // todo schedule cron to create tweet in 10am in the morning
 cron.schedule('0 10 * * *', async () => {
   console.log('Running scheduled tweet generation at 10 AM')
