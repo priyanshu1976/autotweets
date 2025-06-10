@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3000
 
 app.use(
   cors({
-    origin: true,
+    origin: 'http://autotweet.warriorai.in',
     credentials: true,
   })
 )
