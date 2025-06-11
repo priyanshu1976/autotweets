@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client'
 
 import { Request, Response } from 'express'
 
+import { encrypt } from '../lib/utils'
+
 export const scheduleTweets = async (req: Request, res: Response) => {
   const prisma = new PrismaClient()
   try {
@@ -158,20 +160,26 @@ export const setToken = async (req: Request, res: Response) => {
         .json({ message: 'All Twitter credentials are required' })
     }
 
+    // Encrypt all credentials before storing
+    const encryptedApiKey = encrypt(apiKey)
+    const encryptedApiSecret = encrypt(apiSecret)
+    const encryptedAccessToken = encrypt(accessToken)
+    const encryptedAccessTokenSecret = encrypt(accessTokenSecret)
+
     const twitterCredentials = await prisma.accessKey.upsert({
       where: { userId },
       update: {
-        twitterApiKey: apiKey,
-        twitterApiSecret: apiSecret,
-        twitterAccessToken: accessToken,
-        twitterAccessSecret: accessTokenSecret,
+        twitterApiKey: encryptedApiKey,
+        twitterApiSecret: encryptedApiSecret,
+        twitterAccessToken: encryptedAccessToken,
+        twitterAccessSecret: encryptedAccessTokenSecret,
       },
       create: {
         userId,
-        twitterApiKey: apiKey,
-        twitterApiSecret: apiSecret,
-        twitterAccessToken: accessToken,
-        twitterAccessSecret: accessTokenSecret,
+        twitterApiKey: encryptedApiKey,
+        twitterApiSecret: encryptedApiSecret,
+        twitterAccessToken: encryptedAccessToken,
+        twitterAccessSecret: encryptedAccessTokenSecret,
       },
     })
 

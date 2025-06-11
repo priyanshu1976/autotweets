@@ -1,5 +1,6 @@
 import { TwitterApi } from 'twitter-api-v2'
 import { PrismaClient } from '@prisma/client'
+import { decrypt } from '../lib/utils'
 
 export const postTweet = async (
   text: string,
@@ -69,11 +70,18 @@ async function postAllTweets() {
           console.error(`No access keys found for user ${tweet.userId}`)
           continue
         }
+
+        // Decrypt the API keys before using them
+        const decryptedApiKey = decrypt(accessKey.twitterApiKey)
+        const decryptedApiSecret = decrypt(accessKey.twitterApiSecret)
+        const decryptedAccessToken = decrypt(accessKey.twitterAccessToken)
+        const decryptedAccessSecret = decrypt(accessKey.twitterAccessSecret)
+
         await postTweet(tweet.content, {
-          appkey: accessKey.twitterApiKey,
-          appSecret: accessKey.twitterApiSecret,
-          accessToken: accessKey.twitterAccessToken,
-          accessSecret: accessKey.twitterAccessSecret,
+          appkey: decryptedApiKey,
+          appSecret: decryptedApiSecret,
+          accessToken: decryptedAccessToken,
+          accessSecret: decryptedAccessSecret,
         })
 
         // Update tweet status after successful posting
